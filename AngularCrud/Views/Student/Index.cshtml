@@ -1,0 +1,203 @@
+﻿@model IEnumerable<AngularCrud.Models.Student>
+    @{
+        ViewBag.Title = "Index";
+    }
+    <h2>Index</h2>
+    <script>
+        var app = angular.module("myapp", ["ngRoute"]);
+        app.controller("divctrl", function ($scope) {
+            $scope.student = {};
+            $scope.insert = function () {
+                $scope.showdiv = true;
+                $scope.show = true;
+            }
+
+            $scope.create = function () {
+                console.log($scope.student);
+
+
+                    $.ajax("http://localhost:49500/Student/Insert", {
+                        method: "POST",
+                        dataType: 'json',
+                        contentType: "application/json; charset=utf-8",
+                        data: JSON.stringify($scope.student),
+                        success: function (response) {
+                            // alert(response);
+                            $scope.SelectAll();
+                            $scope.DropdownItems();
+                        }
+                    })
+
+                $scope.clear();
+                $scope.showdiv = false;
+
+            }
+
+            $scope.List = {};
+
+            $scope.SelectAll = function () {
+                $.ajax("http://localhost:49500/Student/GetAll", {
+                    method: "GET",
+                    success: function (response) {
+                        $scope.$apply(function () {
+                            $scope.List = response;
+                        });
+                    }
+                })
+            }
+            $scope.SelectAll();
+
+            $scope.DropdownList = [];
+            $scope.DropdownItems = function () {
+                $.ajax("http://localhost:49500/Student/CourseList", {
+                    method: "GET",
+                    success: function (response) {
+                        console.log(response);
+                        $scope.$apply(function () {
+                            $scope.DropdownList = response;
+                            console.log($scope.DropdownList);
+                        });
+                    }
+                })
+            }
+            $scope.DropdownItems();
+
+            $scope.Edit = function (st) {
+                $scope.showdiv = true;
+                $scope.show = false;
+                $.ajax("http://localhost:49500/Student/Edit", {
+                    method: "GET",
+                    dataType: 'json',
+                    contentType: "application/json; charset=utf-8",
+                    data: { id: st.sno },
+                    success: function (response) {
+                        $scope.$apply(function () {
+                            $scope.student.sno = response.sno;
+                            $scope.student.sname = response.sname;
+                            $scope.student.course = response.course;
+                            $scope.student.fee = response.fee;
+                        });
+
+                    }
+                });
+
+
+            }
+
+            $scope.Update = function () {
+                $.ajax("http://localhost:49500/Student/Update", {
+                    method: "POST",
+                    dataType: 'json',
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify($scope.student),
+                    success: function (response) {
+                        // alert(response);
+                        $scope.SelectAll();
+                        $scope.DropdownItems();
+                    }
+                })
+                $scope.clear();
+                $scope.showdiv = false;
+            }
+
+            $scope.Delete = function (st) {
+                $.ajax("http://localhost:49500/Student/Remove", {
+                    method: "POST",
+                    dataType: 'json',
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify(st),
+                    success: function (response) {
+                        //alert(response);
+                        $scope.SelectAll();
+                        $scope.DropdownItems();
+                    }
+                })
+            }
+
+            $scope.clear = function () {
+                $scope.student.sno = "";
+                $scope.student.sname = "";
+                $scope.student.course = "";
+                $scope.student.fee = "";
+            }
+
+
+        });//controller
+
+
+     //   app.directive("selectList", function () {
+            app.directive("ngFillDropdown", function () {
+            var directive = {};
+            //directive.restrict = 'A';
+            //directive.template = "<select ng-model='selecteditem'><option ng-repeat='item in DropdownList'>{{item}}</option> </select>";
+            //directive.restrict = 'AE';
+            directive.template="";
+            return directive;
+            });
+
+        </script>
+
+    <div ng-controller="divctrl">
+
+        <input type="button" value="Create New" ng-click="insert()" class="btn btn-primary">     <div>
+            <table class="table">
+                <tr>
+                    <th>Sno</th>
+                    <th>Sname</th>
+                    <th>Course</th>
+                    <th>Fee</th>
+                    <th>Edit</th>
+                    <th>Delete</th>
+                </tr>
+                <tr ng-repeat="c in List">
+                    <td>{{c.sno}}</td>
+                    <td>{{c.sname}}</td>
+                    <td>{{c.course}}</td>
+                    <td>{{c.fee}}</td>
+                    <td><span ng-click="Edit(c)"   class="btn btn-primary">Edit</span></td>
+                    <td><span ng-click="Delete(c)" class="btn btn-danger">Delete</span></td>
+                </tr>
+            </table>
+        </div >
+       <!-- <div select-list></div>
+
+        <select ng-fill-dropdown ng-src="mylist" ng-model="abc"></select>-->
+
+        <div ng-show="showdiv">
+            <hr>
+            <h3 ng-show="show">Create</h3>
+            <h3 ng-hide="show">Update</h3>
+            <form name="formvalidation" >
+                <input type="text" ng-model="student.sno"  placeholder="Sno" name="Sno" required>
+                <span style="color:red" ng-show="formvalidation.Sno.$touched && formvalidation.Sno.$invalid">
+                    <span ng-show="formvalidation.Sno.$error.required">Sno is required.</span>
+                </span><br>
+
+                <input type="text" ng-model="student.sname" placeholder="Sname" name="Sname" required>
+                <span style="color:red" ng-show="formvalidation.Sname.$touched && formvalidation.Sname.$invalid">
+                    <span ng-show="formvalidation.Sname.$error.required">student name is required.</span>
+                </span><br>
+
+                <input type="text" ng-model="student.course" placeholder="Course" name="Course" required>
+                <span style="color:red" ng-show="formvalidation.Course.$touched && formvalidation.Course.$invalid">
+                    <span ng-show="formvalidation.Course.$error.required">Course is required.</span>
+                </span><br>
+
+             <!--   <input type="email" ng-model="student.email" placeholder="Email" name="Mail" required>
+                <span style="color:red" ng-show="formvalidation.Mail.$touched && formvalidation.Mail.$invalid">
+                    <span ng-show="formvalidation.Mail.$error.email">Enter a valid email.</span>
+                    <span ng-show="formvalidation.Mail.$error.required">Email is required.</span>
+                </span><br>
+                 -->
+                <input type="text" ng-model="student.fee" placeholder="Fee" name="Fee" required>
+                <span style="color:red" ng-show="formvalidation.Fee.$touched && formvalidation.Fee.$invalid">
+                    <span ng-show="formvalidation.Fee.$error.required">Fee is required.</span>
+                </span><br>
+
+                <input type="submit" value="Create" ng-show="show" ng-click="create()" ng-disabled="!formvalidation.$valid" class="btn btn-primary">
+                <input type="submit" value="Update" ng-hide="show" ng-click="Update()" ng-disabled="!formvalidation.$valid" class="btn btn-primary">
+            </form>
+            <hr>
+        </div>
+    </div >
+

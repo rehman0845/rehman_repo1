@@ -1,0 +1,108 @@
+﻿@model IEnumerable<AngularCrud.Models.Student>
+@{
+    ViewBag.Title = "Index";
+}
+<h2>Index</h2>
+
+
+<script>
+   
+
+    ////   app.directive("selectList", function () {
+    ////app.directive("ngFillDropdown", function () {
+    ////var directive = {};
+    //////directive.restrict = 'A';
+    //////directive.template = "<select ng-model='selecteditem'><option ng-repeat='item in DropdownList'>{{item}}</option> </select>";
+    ////return directive;
+    ////});
+    ////app.directive("fillDropDown", function () {
+    ////    return {
+    ////        restrict: 'E',
+    ////        template: "<select id='kk'></select>",
+    ////        link: function (scope, element, attr) {
+    ////            //console.log(scope);
+    ////            //console.log(element);
+    ////            //console.log(attr);
+
+    ////            scope.$watch(attr.source, function (nv, ov) {
+    ////                console.log("hi");
+    ////                for (i = 0; i < scope.items.length; i++) {
+    ////                    $(element).children().append($("<option/>", { value: scope.items[i], text: scope.items[i] }));
+    ////                }
+    ////            });
+    ////        }
+    ////    }
+    ////});
+
+</script> 
+<style>
+
+</style>
+
+<div ng-controller="divctrl">
+    <!-- <select fill-drop-down source="DropdownList" name="droplist"></select>-->
+    <div>
+        <fill-drop-down source="DropdownList"></fill-drop-down>
+    </div>
+    <input type="search" placeholder="search" id="search" ng-model="SearchCourse" ng-change="SearchItem()">
+    <input type="button" value="Create New" ng-click="insert()" class="btn btn-primary">
+    <div>
+        <table class="table">
+            <tr>
+                <th>Sno</th>
+                <th>Sname</th>
+                <th>Course</th>
+                <th>Fee</th>
+                <th>Edit</th>
+                <th>Delete</th>
+            </tr>
+            <tr ng-repeat="c in List">
+                <td>{{c.sno}}</td>
+                <td>{{c.sname}}</td>
+                <td>{{c.course}}</td>
+                <td>{{c.fee}}</td>
+                <td><span ng-click="Edit(c)" class="btn btn-primary">Edit</span></td>
+                <td><span ng-click="Delete(c)" class="btn btn-danger">Delete</span></td>
+            </tr>
+        </table>
+    </div>
+    <div ng-show="showdiv">
+        <hr>
+        <h3 ng-show="show">Create</h3>
+        <h3 ng-hide="show">Update</h3>
+        <form name="formvalidation">
+            <input type="text" ng-model="student.sno" placeholder="Sno" name="Sno" required>
+            <span style="color:red" ng-show="formvalidation.Sno.$touched && formvalidation.Sno.$invalid">
+                <span ng-show="formvalidation.Sno.$error.required">Sno is required.</span>
+            </span><br>
+
+            <input type="text" ng-model="student.sname" placeholder="Sname" name="Sname" required>
+            <span style="color:red" ng-show="formvalidation.Sname.$touched && formvalidation.Sname.$invalid">
+                <span ng-show="formvalidation.Sname.$error.required">student name is required.</span>
+            </span><br>
+
+            <input type="text" ng-model="student.course" placeholder="Course" name="Course" required>
+            <span style="color:red" ng-show="formvalidation.Course.$touched && formvalidation.Course.$invalid">
+                <span ng-show="formvalidation.Course.$error.required">Course is required.</span>
+            </span><br>
+
+            <!--   <input type="email" ng-model="student.email" placeholder="Email" name="Mail" required>
+               <span style="color:red" ng-show="formvalidation.Mail.$touched && formvalidation.Mail.$invalid">
+                   <span ng-show="formvalidation.Mail.$error.email">Enter a valid email.</span>
+                   <span ng-show="formvalidation.Mail.$error.required">Email is required.</span>
+               </span><br>
+                -->
+            <input type="text" ng-model="student.fee" placeholder="Fee" name="Fee" required>
+            <span style="color:red" ng-show="formvalidation.Fee.$touched && formvalidation.Fee.$invalid">
+                <span ng-show="formvalidation.Fee.$error.required">Fee is required.</span>
+            </span><br>
+
+            <input type="submit" value="Create" ng-show="show" ng-click="create()" ng-disabled="!formvalidation.$valid" class="btn btn-primary">
+            <input type="submit" value="Update" ng-hide="show" ng-click="Update()" ng-disabled="!formvalidation.$valid" class="btn btn-primary">
+        </form>
+        <hr>
+    </div>
+</div>
+
+<script src="~/Student1/Service.js"></script>
+<script src="~/Student1/Controller.js"></script>
